@@ -162,20 +162,32 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const [language, setLanguageState] = useState<Language>('en');
 
     useEffect(() => {
-        AsyncStorage.getItem(LANG_STORAGE_KEY).then(saved => {
-            if (saved === 'en' || saved === 'hi') {
-                setLanguageState(saved);
-            }
-        });
+        AsyncStorage.getItem(LANG_STORAGE_KEY)
+            .then(saved => {
+                if (saved === 'en' || saved === 'hi') {
+                    setLanguageState(saved);
+                }
+            })
+            .catch((error) => {
+                // Silently fail - use default language
+                console.warn('Failed to load language preference:', error);
+            });
     }, []);
 
     const setLanguage = (lang: Language) => {
         setLanguageState(lang);
-        AsyncStorage.setItem(LANG_STORAGE_KEY, lang);
+        AsyncStorage.setItem(LANG_STORAGE_KEY, lang).catch((error) => {
+            console.warn('Failed to save language preference:', error);
+        });
     };
 
     const t = (key: string): string => {
-        return translations[language][key] || key;
+        // Safe access with fallback to prevent crashes
+        const langTranslations = translations[language];
+        if (!langTranslations) {
+            return key;
+        }
+        return langTranslations[key] || key;
     };
 
     return (

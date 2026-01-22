@@ -67,16 +67,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         // Load saved theme preference
-        AsyncStorage.getItem(THEME_STORAGE_KEY).then(saved => {
-            if (saved && ['light', 'dark', 'system'].includes(saved)) {
-                setModeState(saved as ThemeMode);
-            }
-        });
+        AsyncStorage.getItem(THEME_STORAGE_KEY)
+            .then(saved => {
+                if (saved && ['light', 'dark', 'system'].includes(saved)) {
+                    setModeState(saved as ThemeMode);
+                }
+            })
+            .catch((error) => {
+                // Silently fail - use default theme
+                console.warn('Failed to load theme preference:', error);
+            });
     }, []);
 
     const setMode = (newMode: ThemeMode) => {
         setModeState(newMode);
-        AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
+        AsyncStorage.setItem(THEME_STORAGE_KEY, newMode).catch((error) => {
+            console.warn('Failed to save theme preference:', error);
+        });
     };
 
     const toggleTheme = () => {

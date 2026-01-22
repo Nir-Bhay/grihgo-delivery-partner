@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
 
             login: async (phone: string) => {
                 logger.action('AuthStore', 'login', { phone });
-                // Mock user data
+                // Mock user data - store createdAt as ISO string for safe serialization
                 const mockUser: User = {
                     id: 'GR-DP-12345',
                     name: 'Rahul Sharma',
@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthState>()(
                     rating: 4.8,
                     totalDeliveries: 245,
                     documents: [],
-                    createdAt: new Date(),
+                    createdAt: new Date().toISOString() as unknown as Date,
                     verified: true,
                 };
                 set({ isAuthenticated: true, user: mockUser });
@@ -65,6 +65,12 @@ export const useAuthStore = create<AuthState>()(
         {
             name: 'auth-storage',
             storage: createJSONStorage(() => AsyncStorage),
+            // Handle rehydration to convert date strings back to Date objects
+            onRehydrateStorage: () => (state) => {
+                if (state?.user?.createdAt && typeof state.user.createdAt === 'string') {
+                    state.user.createdAt = new Date(state.user.createdAt);
+                }
+            },
         }
     )
 );

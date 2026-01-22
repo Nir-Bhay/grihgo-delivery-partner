@@ -12,9 +12,11 @@ let successSound: Audio.Sound | null = null;
 
 export const sounds = {
     /**
-     * Initialize audio system
+     * Initialize audio system - with safe fallback for Android
      */
     init: async () => {
+        if (Platform.OS === 'web') return;
+
         try {
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: false,
@@ -23,6 +25,7 @@ export const sounds = {
                 shouldDuckAndroid: true,
             });
         } catch (error) {
+            // Silently fail - audio is not critical for app function
             console.warn('Failed to initialize audio:', error);
         }
     },

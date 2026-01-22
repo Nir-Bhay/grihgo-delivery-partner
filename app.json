@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "grihgo-delivery",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -30,7 +30,9 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "VIBRATE"
+        "VIBRATE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -52,7 +54,11 @@
     },
     "extra": {
       "appVersion": "1.0.0",
-      "buildNumber": 1
+      "buildNumber": 1,
+      "router": {},
+      "eas": {
+        "projectId": "595c275e-9e00-4f5e-a420-82bc228e8422"
+      }
     }
   }
 }
